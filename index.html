@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Creative - Bootstrap 3 Responsive Admin Template">
+  <meta name="author" content="GeeksLabs">
+  <meta name="keyword" content="Creative, Dashboard, Admin, Template, Theme, Bootstrap, Responsive, Retina, Minimal">
+
+  <title>COVID UPDATES</title>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  <!-- Bootstrap CSS -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <!-- bootstrap theme -->
+  <link href="css/bootstrap-theme.css" rel="stylesheet">
+  <!--external css-->
+  <!-- font icon -->
+  <link href="css/elegant-icons-style.css" rel="stylesheet" />
+  <link href="css/font-awesome.min.css" rel="stylesheet" />
+  <link href="css/style.css" rel="stylesheet">
+  <link href="css/style-responsive.css" rel="stylesheet" />
+  <link href="css/jquery-ui-1.10.4.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+  integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+  crossorigin=""/>
+<style>
+.custom .leaflet-popup-tip,
+.custom .leaflet-popup-content-wrapper {
+    background: #e93434;
+    color: #ffffff;
+    width: 150px;
+    height: 100px;
+
+
+}
+.sample{
+  background: #e93434;
+  color: #ffffff;
+}
+</style>
+
+  <!-- Make sure you put this AFTER Leaflet's CSS -->
+ <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+   integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+   crossorigin=""></script>
+   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"> </script>
+</head>
+
+<body>
+  <!-- container section start -->
+  <section id="container" class="">
+
+
+    <header class="header">
+
+
+      <a href="index.html" class="logo">COVID <span class="lite">LIVE UPDATES</span></a>
+
+      <a href="index.html" class="logo1"> <span id="time_label"> 00:00 -- </span></a>
+
+
+        <!-- notificatoin dropdown end-->
+      </div>
+    </header>
+    <!--header end-->
+
+
+
+    <!--main content start-->
+    <section class="main-content">
+      <section class="wrapper">
+        <!--overview start-->
+
+
+        <div class="row">
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+            <div class="info-box dark-bg">
+              <i class="fa fa-circle"></i>
+              <div class="count"><span id="infected"> Loading.... <span></div>
+              <div class="title">Affected Countries</div>
+            </div>
+            <!--/.info-box-->
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+            <div class="info-box yellow-bg">
+              <i class="fa fa-circle"></i>
+              <div class="count"><span id="activecount"> Loading.... <span></div>
+              <div class="title">Total Cases</div>
+            </div>
+
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+            <div class="info-box green-bg">
+              <i class="fa fa-plus-circle"></i>
+              <div class="count"><span id="recoverycount"> Loading..... </span></div>
+              <div class="title">Recoveries</div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+            <div class="info-box red-bg">
+              <i class="fa fa-minus-circle"></i>
+              <div class="count"><span id = "deathcount">Loading....</span></div>
+              <div class="title">Deaths</div>
+            </div>
+          </div>
+          </div>
+        </div>
+  <div class="row">
+
+      <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div  id="issMap">
+        </div>
+        </div>
+
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+          <table class="table table-striped table-bordered data-page-length='5'" id="datum">
+        <thead>
+          <tr>
+            <th>Country Name</th>
+            <th>Total Cases</th>
+            <th>Recovered</th>
+            <th>Deaths</th>
+
+          </tr>
+        </thead>
+        <tbody id="data_sets">
+
+        </tbody>
+        </table>
+          </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+    <canvas id="bar-chart-grouped" width="800" height="450"></canvas>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+      <canvas id="pie-chart" width="800" height="450"></canvas>
+        </div>
+  </div>
+
+
+
+</script>
+</row>
+
+
+
+
+<script>
+
+//Map
+const mymap = L.map('issMap',{scrollWheelZoom:false}).setView([13, 122], 3);
+const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">openstreetmap</a> contibutors ';
+const tileUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+const tiles = L.tileLayer(tileUrl,{attribution});
+tiles.addTo(mymap);
+function getLocation(){
+  var api_url= "https://corona.lmao.ninja/countries?sort=country";
+  $.getJSON(api_url, function(data) {
+  data.forEach(function(i){
+    var country = i.country;
+    var lat =i.countryInfo.lat;
+    var long = i.countryInfo.long;
+    var deaths = i.deaths;
+    var cases = i.cases;
+    var recoveries = i.recovered;
+
+
+    var marker = L.marker([lat,long]).addTo(mymap);
+
+    var message = country+"</br>Cases :"+cases+"</br>Recoveries:"+recoveries+"</br>Deaths :"+deaths+"</br>";
+
+    marker.bindPopup(message);
+    marker.on('click', onClick);
+
+    marker.click
+  });
+
+  function onClick(e) {
+   var popup = e.target.getPopup();
+   var content = popup.getContent();
+   console.log(content);
+}
+   });
+}
+function dataserts(){
+var api_url= "https://corona.lmao.ninja/countries?sort=country";
+$.getJSON(api_url, function(data) {
+data.forEach(function(i){
+  $("#data_sets").append(`
+  <tr>
+    <td>  ${i.country} </td>
+    <td>  ${i.cases} </td>
+    <td>  ${i.recovered} </td>
+    <td>  ${i.deaths} </td>
+  </tr>`);
+});
+$(document).ready( function () {
+            $('#datum').DataTable({
+              "pageLength": 5,
+            });
+        } );
+      var number = data.length
+      document.getElementById('infected').textContent = number;
+ });
+}
+function getDate(){
+  var api_url= "http://worldtimeapi.org/api/timezone/Asia/Manila";
+  $.getJSON(api_url, function(data) {
+  var dstr = data["datetime"];
+  var  date = new Date(dstr);
+
+console.log(date);
+document.getElementById('time_label').textContent = date;
+   });
+}
+
+function getRec(){
+var api_url= "https://covid19-server.chrismichael.now.sh/api/v1/AllReports";
+$.getJSON(api_url, function(data) {
+  document.getElementById('deathcount').textContent = data["reports"][0].deaths;
+  document.getElementById('activecount').textContent =data["reports"][0].cases;
+  document.getElementById('recoverycount').textContent =data["reports"][0].recovered;
+ });
+}
+
+
+function getAffected(){
+var api_url= "hhttps://corona.lmao.ninja/all";
+$.getJSON(api_url, function(data) {
+  console.log(data);
+  document.getElementById('countriesAffected').textContent =data["affectedCountries"];
+ });
+}
+function try1(){
+  var api_url= "https://corona.lmao.ninja/countries?sort=deaths";
+  $.getJSON(api_url, function(data) {
+  data.slice(0,5).forEach(function(i){
+    var country = i.country;
+    var lat =i.countryInfo.lat;
+    var long = i.countryInfo.long;
+    var deaths = i.deaths;
+    var cases = i.cases;
+    var recoveries = i.recovered;
+
+      console.log(country,deaths);
+
+        });
+        });
+
+}
+function charts(){
+    var api_url= "https://corona.lmao.ninja/countries?sort=deaths";
+  $.getJSON(api_url, function(data) {
+  data.forEach(function(i){
+    const country = i.country;
+    var deaths = i.deaths;
+    var cases = i.cases;
+    var recoveries = i.recovered;
+
+    var labels = data.slice(0,5).map(function (e) {
+      return e.country;
+    });
+    var deaths = data.slice(0,5).map(function (e) {
+      return e.deaths;
+    });
+    var recoveries = data.slice(0,5).map(function (e) {
+      return e.recovered;
+    });
+    new Chart(document.getElementById("bar-chart-grouped"), {
+    type: 'bar',
+
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "Deaths",
+          backgroundColor: "#d95043",
+          data: deaths
+        }, {
+          label: "Recoveries",
+          backgroundColor: "#26c281",
+          data: recoveries
+        }
+      ]
+    },
+    options: {
+      title: {
+        display: true,
+        text: 'Top 5 Most affected Countries'
+      }
+    }
+});
+});
+});
+}
+function piechart(){
+    var api_url= "https://corona.lmao.ninja/countries?sort=deaths";
+  $.getJSON(api_url, function(data) {
+  data.forEach(function(i){
+    const country = i.country;
+    var deaths = i.deaths;
+    var cases = i.cases;
+    var recoveries = i.recovered;
+
+    var labels = data.slice(0,10).map(function (e) {
+      return e.country;
+    });
+    var cases = data.slice(0,10).map(function (e) {
+      return e.cases;
+    });
+
+    new Chart(document.getElementById("pie-chart"), {
+    type: 'pie',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Composition of Cases Around the globe",
+        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#ed88f9","#b2cdbd","#bb020f","#1500d0","#a99cfd"],
+        data: cases
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        text: 'Top 10 Countrues with most number of cases'
+      }
+    }
+});
+});
+});
+}
+
+piechart();
+try1();
+charts();
+dataserts();
+getAffected();
+getLocation();
+getDate();
+getRec();
+
+</script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+</body>
+
+</html>
