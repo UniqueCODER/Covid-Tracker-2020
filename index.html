@@ -156,7 +156,7 @@ const tileUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const tiles = L.tileLayer(tileUrl,{attribution});
 tiles.addTo(mymap);
 function getLocation(){
-  var api_url= "https://corona.lmao.ninja/countries?sort=country";
+  var api_url= "https://corona.lmao.ninja/v2/countries?sort=country";
   $.getJSON(api_url, function(data) {
   data.forEach(function(i){
     var country = i.country;
@@ -185,7 +185,7 @@ function getLocation(){
    });
 }
 function dataserts(){
-var api_url= "https://corona.lmao.ninja/countries?sort=country";
+var api_url= "https://corona.lmao.ninja/v2/countries?sort=country";
 $.getJSON(api_url, function(data) {
 data.forEach(function(i){
   $("#data_sets").append(`
@@ -227,14 +227,14 @@ $.getJSON(api_url, function(data) {
 
 
 function getAffected(){
-var api_url= "hhttps://corona.lmao.ninja/all";
+var api_url= "hhttps://corona.lmao.ninja/v2/all";
 $.getJSON(api_url, function(data) {
   console.log(data);
   document.getElementById('countriesAffected').textContent =data["affectedCountries"];
  });
 }
 function try1(){
-  var api_url= "https://corona.lmao.ninja/countries?sort=deaths";
+  var api_url= "https://corona.lmao.ninja/v2/countries?sort=deaths";
   $.getJSON(api_url, function(data) {
   data.slice(0,5).forEach(function(i){
     var country = i.country;
@@ -251,7 +251,7 @@ function try1(){
 
 }
 function charts(){
-    var api_url= "https://corona.lmao.ninja/countries?sort=deaths";
+    var api_url= "https://corona.lmao.ninja/v2/countries?sort=deaths";
   $.getJSON(api_url, function(data) {
   data.forEach(function(i){
     const country = i.country;
@@ -296,7 +296,7 @@ function charts(){
 });
 }
 function piechart(){
-    var api_url= "https://corona.lmao.ninja/countries?sort=deaths";
+    var api_url= "https://corona.lmao.ninja/v2/countries?sort=deaths";
   $.getJSON(api_url, function(data) {
   data.forEach(function(i){
     const country = i.country;
